@@ -27,13 +27,13 @@ func (d *DepartmentDelegate) BuildField() []*core.Field {
 	fields := make([]*core.Field, 0)
 
 	fields = append(fields,
-		core.NewItemField("id", core.FieldTypeString),
+		core.NewNodeField("id", core.FieldTypeString),
 	)
 	fields = append(fields,
-		core.NewItemField("name", core.FieldTypeString),
+		core.NewNodeField("name", core.FieldTypeString),
 	)
 	fields = append(fields,
-		core.NewItemField("test", core.FieldTypeString),
+		core.NewNodeField("test", core.FieldTypeString),
 	)
 	return fields
 }

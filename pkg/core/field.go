@@ -34,7 +34,7 @@ func (f *Field) Resolver() graphql.FieldResolveFn {
 	return f.resolver
 }
 
-func NewItemField(fieldName string, fieldType FieldType) *Field {
+func NewNodeField(fieldName string, fieldType FieldType) *Field {
 	return &Field{
 		fieldName: fieldName,
 		fieldType: fieldType,

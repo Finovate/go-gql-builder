@@ -59,13 +59,13 @@ func (d *UserDelegate) BuildField() []*core.Field {
 	fields := make([]*core.Field, 0)
 
 	fields = append(fields,
-		core.NewItemField("id", core.FieldTypeString),
+		core.NewNodeField("id", core.FieldTypeString),
 	)
 	fields = append(fields,
-		core.NewItemField("name", core.FieldTypeString),
+		core.NewNodeField("name", core.FieldTypeString),
 	)
 	fields = append(fields,
-		core.NewItemField("price", core.FieldTypeFloat),
+		core.NewNodeField("price", core.FieldTypeFloat),
 	)
 
 	fields = append(fields, d.departmentField())
@@ -73,7 +73,7 @@ func (d *UserDelegate) BuildField() []*core.Field {
 }
 
 func (d *UserDelegate) departmentField() *core.Field {
-	field := core.NewItemField("department", FieldTypeDepartment)
+	field := core.NewNodeField("department", FieldTypeDepartment)
 	field.SetResolver(func(p graphql.ResolveParams) (interface{}, error) {
 		// TODO 可以考虑封装一个Thunk，这个resolver只拿主键，然后外层的方法再去查具体数据
 		// github.com/graphql-go/graphql@v0.8.1/executor.go:754
