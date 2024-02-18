@@ -55,7 +55,7 @@ func (d *UserDelegate) IsList() bool {
 	return true
 }
 
-func (d *UserDelegate) BuildField() []*core.Field {
+func (d *UserDelegate) BuildFields() []*core.Field {
 	fields := make([]*core.Field, 0)
 
 	fields = append(fields,

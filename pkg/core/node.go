@@ -18,7 +18,7 @@ type Node interface {
 	Type() FieldType
 
 	Resolve() graphql.FieldResolveFn
-	BuildField() []*Field
+	BuildFields() []*Field
 
 	IsList() bool
 }

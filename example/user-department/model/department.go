@@ -23,7 +23,7 @@ func (d *DepartmentDelegate) Type() core.FieldType {
 	return FieldTypeDepartment
 }
 
-func (d *DepartmentDelegate) BuildField() []*core.Field {
+func (d *DepartmentDelegate) BuildFields() []*core.Field {
 	fields := make([]*core.Field, 0)
 
 	fields = append(fields,
