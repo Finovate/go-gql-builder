@@ -1,0 +1,6 @@
+[mysql]
+host = "110.41.175.4"
+port = "3306"
+username = "root"
+password = "Wu4G5rw4c3Xw"
+database = "mydb"

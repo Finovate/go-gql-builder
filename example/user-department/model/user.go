@@ -44,7 +44,7 @@ func (d *UserDelegate) initItemTable() []*adapter.Column {
 }
 
 func (d *UserDelegate) Name() string {
-	return "users"
+	return "user"
 }
 
 func (d *UserDelegate) Type() core.FieldType {
