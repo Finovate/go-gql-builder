@@ -5,6 +5,8 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
+
+	"github.com/shuishiyuanzhong/go-gql-builder/example/user-department/conf"
 	"github.com/shuishiyuanzhong/go-gql-builder/example/user-department/model"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
 )
@@ -13,7 +15,7 @@ func InitGraphQL() (*graphql.Schema, error) {
 	core.Registry().Register(model.NewUserDelegate())
 	core.Registry().Register(model.NewDepartmentDelegate())
 
-	//core.Registry().SetDB(conf.C().Mysql.GetDB())
+	core.Registry().SetDB(conf.C().Mysql.GetDB())
 	return core.Registry().BuildSchema()
 }
 

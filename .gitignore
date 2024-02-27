@@ -103,3 +103,5 @@ fabric.properties
 .idea
 
 .DS_Store
+
+example/etc
