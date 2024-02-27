@@ -2,8 +2,10 @@ package model
 
 import (
 	"github.com/graphql-go/graphql"
+
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
+	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
 const (
@@ -12,6 +14,7 @@ const (
 
 type UserDelegate struct {
 	adapter.SqlAdapter
+	argument.DefaultArgumentBuilder
 }
 
 var _ core.Node = &UserDelegate{}

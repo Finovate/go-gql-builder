@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
+	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
 const (
@@ -11,6 +12,7 @@ const (
 
 type DepartmentDelegate struct {
 	adapter.SqlAdapter
+	argument.DefaultArgumentBuilder
 }
 
 var _ core.Node = (*DepartmentDelegate)(nil)
