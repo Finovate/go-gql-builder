@@ -121,15 +121,17 @@ func (h *NodeRegistry) initNodeField(delegate Node) error {
 	fields := make(graphql.Fields)
 	args := make(graphql.FieldConfigArgument)
 	for _, f := range rawFields {
-		convert, arg, err := f.Convert(h)
+		convert, err := f.Convert(h)
 		if err != nil {
 			return err
 		}
 		fields[f.fieldName] = convert
-		for name, config := range arg {
-			args[name] = config
-		}
 	}
+	argList := delegate.BuildArgs()
+	for _, arg := range argList {
+		args[arg.TypeName()] = &graphql.ArgumentConfig{Type: arg.GetArgumentType()}
+	}
+
 	h.fieldsMap[delegate.Type()] = fields
 	h.argsMap[delegate.Type()] = args
 	return nil
@@ -176,26 +178,6 @@ func (h *NodeRegistry) buildNode(delegate Node) error {
 	for name, field := range fields {
 		obj.AddFieldConfig(name, field)
 	}
-	// TODO 现在碰到一个问题，users下面的department不支持筛选条件，也就是暂时不支持嵌套结构进行筛选
-	// failure case:
-	// query {
-	//  users(id:"2"){
-	//    id
-	//    name
-	//    price
-	//    department(id: "1"){
-	//      id
-	//    }
-	//  }
-	//}
-	//
-	// success case:
-	// query {
-	//  departments(id: "1"){
-	//    id
-	//    name
-	//  }
-	//}
 
 	h.completeCache[delegate.Name()] = &graphql.Field{
 		Type:    cache,

@@ -1,7 +1,9 @@
 package adapter
 
 import (
+	"fmt"
 	"github.com/graphql-go/graphql"
+	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
 // SqlAdapter is a part of Node interface, which is
@@ -39,6 +41,20 @@ func NewDefaultSqlAdapter(tableName string, columns []*Column) *DefaultSqlAdapte
 func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
 
+		for name, value := range p.Args {
+			arg := argument.ArgumentFactory(name)
+			err := arg.Validate(value)
+			if err != nil {
+				return nil, err
+			}
+
+			sqlArg, ok := arg.(argument.SqlArgument)
+			if ok {
+				wherestring := sqlArg.ParseSqlValue()
+				fmt.Println(wherestring)
+			}
+		}
+
 		//customFields := make([]*ast.Field, 0)
 		//for _, field := range p.Info.FieldASTs {
 		//	if field.Name.Value == d.tableName {
@@ -56,7 +72,7 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 		//
 		//var customCollect []string
 		//for _, field := range customFields {
-		//	customCollect = append(customCollect, field.Name.Value)
+		//	customCollect = append(customCollect, field.TypeName.Value)
 		//}
 		//
 		//sql := "SELECT %s from %s"
