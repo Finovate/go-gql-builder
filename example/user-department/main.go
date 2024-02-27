@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/shuishiyuanzhong/go-gql-builder/example/user-department/conf"
 	"net/http"
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
+
+	"github.com/shuishiyuanzhong/go-gql-builder/example/user-department/conf"
 	"github.com/shuishiyuanzhong/go-gql-builder/example/user-department/model"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
 )

@@ -4,10 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/BurntSushi/toml"
-	_ "github.com/go-sql-driver/mysql"
 	"sync"
 	"time"
+
+	"github.com/BurntSushi/toml"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (

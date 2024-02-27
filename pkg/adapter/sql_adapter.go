@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
-	"strings"
 )
 
 // SqlAdapter is a part of Node interface, which is
