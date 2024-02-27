@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	//_ "github.com/go-sql-driver/mysql"
 	"sync"
 	"time"
+
+	"github.com/BurntSushi/toml"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
@@ -18,12 +20,33 @@ type Config struct {
 	Mysql *Mysql `toml:"mysql"`
 }
 
+func NewConfig() *Config {
+	return &Config{
+		Mysql: newDefaultMysql(),
+	}
+}
+
+func (c *Config) InitGlobal() error {
+	global = c
+	return nil
+}
+
+func LoadConfigFromToml(filePath string) error {
+	var err error
+	cfg := NewConfig()
+	if _, err = toml.DecodeFile(filePath, cfg); err != nil {
+		return err
+	}
+	global = cfg
+	return cfg.InitGlobal()
+}
+
 func C() *Config {
 	if global == nil {
-		//err := LoadConfigFromToml("../etc/app.toml")
-		//if err != nil {
-		//	fmt.Println(err)
-		//}
+		err := LoadConfigFromToml("../etc/app.toml")
+		if err != nil {
+			fmt.Println(err)
+		}
 		//LoadConfigFromToml("../../../etc/app.toml")
 	}
 	return global
@@ -41,6 +64,17 @@ type Mysql struct {
 	lock        sync.Mutex
 
 	Database string `toml:"database"`
+}
+
+func newDefaultMysql() *Mysql {
+	return &Mysql{
+		Host:        "127.0.0.1",
+		Port:        "3306",
+		MaxOpenConn: 200,
+		MaxIdleConn: 100,
+
+		Database: "min_data",
+	}
 }
 
 func (m *Mysql) GetDB() *sql.DB {
