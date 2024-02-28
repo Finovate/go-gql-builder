@@ -12,14 +12,13 @@ var (
 		Name:        FilterArgumentType,
 		Description: "Filter argument",
 		Serialize: func(value interface{}) interface{} {
-			// 这里实现将内部值转换为适合客户端的形式
-			return value // 示例：直接返回值
+			return value
 		},
 		ParseValue: func(value interface{}) interface{} {
-			// 这里实现将内部值转换为适合客户端的形式
-			return value // 示例：直接返回值
+			return value
 		},
 		ParseLiteral: func(valueAST ast.Value) interface{} {
+
 			return parseAstValue(valueAST)
 		},
 	})
@@ -28,12 +27,12 @@ var (
 var _ SqlArgument = (*FilterArgument)(nil)
 
 type FilterArgument struct {
-	operationMap map[string]Operation
+	operationsMap map[string][]Operation
 }
 
 func newFilterArgument() *FilterArgument {
 	return &FilterArgument{
-		operationMap: make(map[string]Operation),
+		operationsMap: make(map[string][]Operation),
 	}
 }
 
@@ -46,25 +45,21 @@ func (f *FilterArgument) Validate(input interface{}) error {
 	if !ok {
 		return fmt.Errorf("filter argument must be a map[string]interface{}")
 	}
-	// TODO 校验 操作符以及值的格式是否合法
 	for fieldName, rawMap := range argsMap {
 		operationMap, ok := rawMap.(map[string]interface{})
 		if !ok {
 			return fmt.Errorf("argument for field %s must be a map[string]interface{}", fieldName)
 		}
-		if len(operationMap) > 1 {
-			return fmt.Errorf("argument for field %s must have only one operation", fieldName)
-		}
+
 		for op, value := range operationMap {
 			operation, err := OperationFactory(op, fieldName, value)
 			if err != nil {
 				return err
 			}
-			if err = operation.Validate(); err != nil {
-				return err
+			if f.operationsMap[fieldName] == nil {
+				f.operationsMap[fieldName] = make([]Operation, 0)
 			}
-
-			f.operationMap[fieldName] = operation
+			f.operationsMap[fieldName] = append(f.operationsMap[fieldName], operation)
 		}
 
 	}
@@ -78,13 +73,14 @@ func (f *FilterArgument) GetArgumentType() graphql.Input {
 }
 
 func (f *FilterArgument) ParseSqlValue() string {
-	sqlString := strings.Builder{}
-	for _, operation := range f.operationMap {
-		sqlString.WriteString(operation.ToSql())
-		sqlString.WriteString(" AND ")
+	sqlStrings := make([]string, 0, len(f.operationsMap))
+	for _, opList := range f.operationsMap {
+		for _, operation := range opList {
+			sqlStrings = append(sqlStrings, operation.ToSql())
+		}
 	}
 
-	return sqlString.String()
+	return strings.Join(sqlStrings, " AND ")
 }
 
 // 辅助函数：递归解析 AST 值
