@@ -3,8 +3,10 @@ package core
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 
 	"github.com/graphql-go/graphql"
+	"github.com/graphql-go/handler"
 )
 
 // NodeRegistry is a key component in the go-gql-builder framework,
@@ -68,7 +70,19 @@ func (h *NodeRegistry) getNode(typeName FieldType) (Node, error) {
 	return node, nil
 }
 
-func (h *NodeRegistry) BuildSchema() (*graphql.Schema, error) {
+func (h *NodeRegistry) BuildHandler() (http.Handler, error) {
+	schema, err := h.buildSchema()
+	if err != nil {
+		return nil, err
+	}
+
+	return handler.New(&handler.Config{
+		Schema: schema,
+		Pretty: true,
+	}), nil
+}
+
+func (h *NodeRegistry) buildSchema() (*graphql.Schema, error) {
 
 	h.preLoadDelegate()
 
