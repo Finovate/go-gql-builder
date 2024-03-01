@@ -12,11 +12,11 @@ import (
 )
 
 func InitGraphQL() (*graphql.Schema, error) {
-	core.Registry().Register(model.NewUserDelegate())
-	core.Registry().Register(model.NewDepartmentDelegate())
+	core.DefaultRegistry().Register(model.NewUserDelegate())
+	core.DefaultRegistry().Register(model.NewDepartmentDelegate())
 
-	core.Registry().SetDB(conf.C().Mysql.GetDB())
-	return core.Registry().BuildSchema()
+	core.DefaultRegistry().SetDB(conf.C().Mysql.GetDB())
+	return core.DefaultRegistry().BuildSchema()
 }
 
 func main() {

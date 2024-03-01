@@ -22,14 +22,17 @@ type SqlAdapter interface {
 // DefaultSqlAdapter is a default implementation of SqlAdapter.
 // It is use to query single table with custom fields.
 type DefaultSqlAdapter struct {
+	node core.Node
+
 	tableName      string
 	tableColumns   []*Column
 	columnsByAlias map[string]*Column
 	columnsByName  map[string]*Column
 }
 
-func NewDefaultSqlAdapter(tableName string, columns []*Column) *DefaultSqlAdapter {
+func NewDefaultSqlAdapter(tableName string, columns []*Column, node core.Node) *DefaultSqlAdapter {
 	d := &DefaultSqlAdapter{
+		node:           node,
 		tableName:      tableName,
 		tableColumns:   make([]*Column, 0, len(columns)),
 		columnsByAlias: make(map[string]*Column),
@@ -85,7 +88,7 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 		sql := "SELECT %s from %s"
 		sql = fmt.Sprintf(sql, strings.Join(customCollect, ","), d.tableName)
 
-		rows, err := core.Registry().GetDB().QueryContext(context.Background(), sql)
+		rows, err := d.node.GetRegistry().GetDB().QueryContext(context.Background(), sql)
 		if err != nil {
 			return nil, err
 		}

@@ -12,6 +12,7 @@ const (
 
 type DepartmentDelegate struct {
 	adapter.SqlAdapter
+	core.BaseNode
 	argument.DefaultArgumentBuilder
 }
 
@@ -46,7 +47,7 @@ func (d *DepartmentDelegate) IsList() bool {
 
 func NewDepartmentDelegate() (d *DepartmentDelegate) {
 	d = &DepartmentDelegate{}
-	d.SqlAdapter = adapter.NewDefaultSqlAdapter("department", d.initItemTable())
+	d.SqlAdapter = adapter.NewDefaultSqlAdapter("department", d.initItemTable(), d)
 	return
 }
 

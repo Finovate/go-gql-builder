@@ -28,7 +28,7 @@ type NodeRegistry struct {
 	db *sql.DB
 }
 
-func newRegistry() *NodeRegistry {
+func NewRegistry() *NodeRegistry {
 	return &NodeRegistry{
 		nodes:         make([]Node, 0),
 		nodesByType:   make(map[FieldType]Node),
@@ -39,9 +39,9 @@ func newRegistry() *NodeRegistry {
 	}
 }
 
-func Registry() *NodeRegistry {
+func DefaultRegistry() *NodeRegistry {
 	if registry == nil {
-		registry = newRegistry()
+		registry = NewRegistry()
 	}
 	return registry
 }
@@ -57,6 +57,7 @@ func (h *NodeRegistry) SetDB(db *sql.DB) {
 func (h *NodeRegistry) Register(delegate Node) {
 	h.nodes = append(h.nodes, delegate)
 	h.nodesByType[delegate.Type()] = delegate
+	delegate.SetRegistry(h)
 }
 
 func (h *NodeRegistry) getNode(typeName FieldType) (Node, error) {

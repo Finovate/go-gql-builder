@@ -25,4 +25,19 @@ type Node interface {
 	BuildArgs() []argument.Argument
 
 	IsList() bool
+
+	GetRegistry() *NodeRegistry
+	SetRegistry(*NodeRegistry)
+}
+
+type BaseNode struct {
+	registry *NodeRegistry
+}
+
+func (n *BaseNode) GetRegistry() *NodeRegistry {
+	return n.registry
+}
+
+func (n *BaseNode) SetRegistry(registry *NodeRegistry) {
+	n.registry = registry
 }
