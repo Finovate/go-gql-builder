@@ -48,6 +48,9 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 
 		customFields := make([]*ast.Field, 0)
 		for _, field := range p.Info.FieldASTs {
+			// FIXME 这个判断的逻辑不太对，当进到Resolve方法的时候，p.Info.FieldASTs 按道理来说只有一个元素
+			// 如： users{id,name,age}，实际上拿到的就是一个users
+			// 下面的判断也不正确，tableName并不等于这个Node的name
 			if field.Name.Value == d.tableName {
 				selections := field.SelectionSet.Selections
 				for _, selection := range selections {
@@ -57,6 +60,7 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 			}
 		}
 
+		// FIXME 判断有点问题，理应是<=
 		if len(customFields) < 0 {
 			return nil, errors.New("no custom fields to query")
 		}
@@ -65,6 +69,9 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 		for _, field := range customFields {
 			customCollect = append(customCollect, field.Name.Value)
 		}
+		// FIXME 这里需要额外加一些判断，比如graphql传递了users{id,name,department}
+		// 但实际上user表只有id，name两个字段，department这个field并不存在于user表中，而是有额外的逻辑进行处理
+		// 因此customCollect应该和tableColumns进行比较，如果里面的field不在tableColumns中，则剔除出去不进行查询
 
 		sql := "SELECT %s from %s"
 		sql = fmt.Sprintf(sql, strings.Join(customCollect, ","), d.tableName)
