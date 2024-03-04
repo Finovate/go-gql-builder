@@ -1,6 +1,9 @@
 package core
 
-import "github.com/graphql-go/graphql"
+import (
+	"github.com/graphql-go/graphql"
+	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
+)
 
 // Node a Node represents a fundamental business object,
 // serving as the core unit for constructing GraphQL queries.
@@ -19,6 +22,22 @@ type Node interface {
 
 	Resolve() graphql.FieldResolveFn
 	BuildFields() []*Field
+	BuildArgs() []argument.Argument
 
 	IsList() bool
+
+	GetRegistry() *NodeRegistry
+	SetRegistry(*NodeRegistry)
+}
+
+type BaseNode struct {
+	registry *NodeRegistry
+}
+
+func (n *BaseNode) GetRegistry() *NodeRegistry {
+	return n.registry
+}
+
+func (n *BaseNode) SetRegistry(registry *NodeRegistry) {
+	n.registry = registry
 }

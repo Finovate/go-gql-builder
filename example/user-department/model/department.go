@@ -3,6 +3,7 @@ package model
 import (
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
+	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
 const (
@@ -11,6 +12,8 @@ const (
 
 type DepartmentDelegate struct {
 	adapter.SqlAdapter
+	core.BaseNode
+	argument.DefaultArgumentBuilder
 }
 
 var _ core.Node = (*DepartmentDelegate)(nil)
@@ -44,7 +47,7 @@ func (d *DepartmentDelegate) IsList() bool {
 
 func NewDepartmentDelegate() (d *DepartmentDelegate) {
 	d = &DepartmentDelegate{}
-	d.SqlAdapter = adapter.NewDefaultSqlAdapter("department", d.initItemTable())
+	d.SqlAdapter = adapter.NewDefaultSqlAdapter("department", d.initItemTable(), d)
 	return
 }
 

@@ -8,7 +8,9 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
+
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
+	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
 // SqlAdapter is a part of Node interface, which is
@@ -20,14 +22,17 @@ type SqlAdapter interface {
 // DefaultSqlAdapter is a default implementation of SqlAdapter.
 // It is use to query single table with custom fields.
 type DefaultSqlAdapter struct {
+	node core.Node
+
 	tableName      string
 	tableColumns   []*Column
 	columnsByAlias map[string]*Column
 	columnsByName  map[string]*Column
 }
 
-func NewDefaultSqlAdapter(tableName string, columns []*Column) *DefaultSqlAdapter {
+func NewDefaultSqlAdapter(tableName string, columns []*Column, node core.Node) *DefaultSqlAdapter {
 	d := &DefaultSqlAdapter{
+		node:           node,
 		tableName:      tableName,
 		tableColumns:   make([]*Column, 0, len(columns)),
 		columnsByAlias: make(map[string]*Column),
@@ -45,6 +50,20 @@ func NewDefaultSqlAdapter(tableName string, columns []*Column) *DefaultSqlAdapte
 
 func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
+
+		for name, value := range p.Args {
+			arg := argument.ArgumentFactory(name)
+			err := arg.Validate(value)
+			if err != nil {
+				return nil, err
+			}
+
+			sqlArg, ok := arg.(argument.SqlArgument)
+			if ok {
+				wherestring := sqlArg.ParseSqlValue()
+				fmt.Println(wherestring)
+			}
+		}
 
 		customFields := make([]*ast.Field, 0)
 		for _, field := range p.Info.FieldASTs {
@@ -69,7 +88,7 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 		sql := "SELECT %s from %s"
 		sql = fmt.Sprintf(sql, strings.Join(customCollect, ","), d.tableName)
 
-		rows, err := core.Registry().GetDB().QueryContext(context.Background(), sql)
+		rows, err := d.node.GetRegistry().GetDB().QueryContext(context.Background(), sql)
 		if err != nil {
 			return nil, err
 		}

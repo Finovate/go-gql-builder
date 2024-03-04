@@ -3,8 +3,10 @@ package core
 import (
 	"database/sql"
 	"fmt"
+	"net/http"
 
 	"github.com/graphql-go/graphql"
+	"github.com/graphql-go/handler"
 )
 
 // NodeRegistry is a key component in the go-gql-builder framework,
@@ -28,7 +30,7 @@ type NodeRegistry struct {
 	db *sql.DB
 }
 
-func newRegistry() *NodeRegistry {
+func NewRegistry() *NodeRegistry {
 	return &NodeRegistry{
 		nodes:         make([]Node, 0),
 		nodesByType:   make(map[FieldType]Node),
@@ -39,9 +41,9 @@ func newRegistry() *NodeRegistry {
 	}
 }
 
-func Registry() *NodeRegistry {
+func DefaultRegistry() *NodeRegistry {
 	if registry == nil {
-		registry = newRegistry()
+		registry = NewRegistry()
 	}
 	return registry
 }
@@ -57,6 +59,7 @@ func (h *NodeRegistry) SetDB(db *sql.DB) {
 func (h *NodeRegistry) Register(delegate Node) {
 	h.nodes = append(h.nodes, delegate)
 	h.nodesByType[delegate.Type()] = delegate
+	delegate.SetRegistry(h)
 }
 
 func (h *NodeRegistry) getNode(typeName FieldType) (Node, error) {
@@ -67,7 +70,19 @@ func (h *NodeRegistry) getNode(typeName FieldType) (Node, error) {
 	return node, nil
 }
 
-func (h *NodeRegistry) BuildSchema() (*graphql.Schema, error) {
+func (h *NodeRegistry) BuildHandler() (http.Handler, error) {
+	schema, err := h.buildSchema()
+	if err != nil {
+		return nil, err
+	}
+
+	return handler.New(&handler.Config{
+		Schema: schema,
+		Pretty: true,
+	}), nil
+}
+
+func (h *NodeRegistry) buildSchema() (*graphql.Schema, error) {
 
 	h.preLoadDelegate()
 
@@ -122,15 +137,17 @@ func (h *NodeRegistry) initNodeField(delegate Node) error {
 	fields := make(graphql.Fields)
 	args := make(graphql.FieldConfigArgument)
 	for _, f := range rawFields {
-		convert, arg, err := f.Convert(h)
+		convert, err := f.Convert(h)
 		if err != nil {
 			return err
 		}
 		fields[f.fieldName] = convert
-		for name, config := range arg {
-			args[name] = config
-		}
 	}
+	argList := delegate.BuildArgs()
+	for _, arg := range argList {
+		args[arg.TypeName()] = &graphql.ArgumentConfig{Type: arg.GetArgumentType()}
+	}
+
 	h.fieldsMap[delegate.Type()] = fields
 	h.argsMap[delegate.Type()] = args
 	return nil
@@ -177,26 +194,6 @@ func (h *NodeRegistry) buildNode(delegate Node) error {
 	for name, field := range fields {
 		obj.AddFieldConfig(name, field)
 	}
-	// TODO 现在碰到一个问题，users下面的department不支持筛选条件，也就是暂时不支持嵌套结构进行筛选
-	// failure case:
-	// query {
-	//  users(id:"2"){
-	//    id
-	//    name
-	//    price
-	//    department(id: "1"){
-	//      id
-	//    }
-	//  }
-	//}
-	//
-	// success case:
-	// query {
-	//  departments(id: "1"){
-	//    id
-	//    name
-	//  }
-	//}
 
 	h.completeCache[delegate.Name()] = &graphql.Field{
 		Type:    cache,
