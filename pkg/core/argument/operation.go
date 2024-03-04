@@ -20,7 +20,7 @@ const (
 
 type Operation interface {
 	ToSql() string
-	validate() error
+	validateAndFormat() error
 }
 
 func OperationFactory(operatorType string, fieldName string, value interface{}) (Operation, error) {
@@ -50,20 +50,40 @@ func newCompareOperation(fieldName string, operator string, value interface{}) (
 		operator:  operator,
 		value:     value,
 	}
-	if err := op.validate(); err != nil {
+	if err := op.validateAndFormat(); err != nil {
 		return nil, err
 	}
 	return op, nil
 }
 
 func (e *CompareOperation) ToSql() string {
-	return fmt.Sprintf(" %s %s '%s' ", e.fieldName, e.getOperator(), e.value)
+	return fmt.Sprintf(" %s %s '%v' ", e.fieldName, e.getOperator(), e.value)
 }
 
-func (e *CompareOperation) validate() error {
-	// TODO 校验逻辑聚焦在value的数据类型上，在sql中 value 应该是一个单个元素
-	return nil
-	panic("implement me")
+func (e *CompareOperation) validateAndFormat() error {
+	if e.value == nil {
+		return fmt.Errorf("CompareOperation.value cannot be nil")
+	}
+	// Based on the function parseAstValue, most data types are converted to String,
+	// except for the Bool type.
+	// Therefore, the validateAndFormat logic here should ensure that the value's data type is either String or Bool.
+	// Other types should result in an error directly.
+	value := reflect.ValueOf(e.value)
+	valueType := value.Type()
+
+	switch valueType.Kind() {
+	case reflect.String:
+		return nil
+	case reflect.Bool:
+		if value.Bool() {
+			e.value = 1
+		} else {
+			e.value = 0
+		}
+		return nil
+	default:
+		return fmt.Errorf("CompareOperation expects the value to be a string or bool, but got %s ", valueType.String())
+	}
 }
 
 func (e *CompareOperation) getOperator() string {
@@ -99,13 +119,13 @@ func newContainsOperation(fieldName string, operator string, value interface{}) 
 		operator:  operator,
 		value:     value,
 	}
-	if err := op.validate(); err != nil {
+	if err := op.validateAndFormat(); err != nil {
 		return nil, err
 	}
 	return op, nil
 }
 
-func (c *ContainsOperation) validate() error {
+func (c *ContainsOperation) validateAndFormat() error {
 	if c.value == nil {
 		return fmt.Errorf("ContainsOperation.value cannot be nil")
 	}

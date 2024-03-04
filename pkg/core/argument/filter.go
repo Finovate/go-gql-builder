@@ -18,7 +18,6 @@ var (
 			return value
 		},
 		ParseLiteral: func(valueAST ast.Value) interface{} {
-
 			return parseAstValue(valueAST)
 		},
 	})
@@ -64,7 +63,7 @@ func (f *FilterArgument) Validate(input interface{}) error {
 
 	}
 
-	// TODO validate fieldName in Node fields or table columns
+	// TODO validateAndFormat fieldName in Node fields or table columns
 	return nil
 }
 
@@ -84,21 +83,18 @@ func (f *FilterArgument) ParseSqlValue() string {
 }
 
 // 辅助函数：递归解析 AST 值
+// TODO: 基本数据类型的解析逻辑还有点粗糙，需要优化。这个函数优化后还需要修改 CompareOperation
 func parseAstValue(valueAST ast.Value) interface{} {
 	switch valueAST := valueAST.(type) {
 	case *ast.ObjectValue:
-		// 创建一个映射来存储对象值
 		result := make(map[string]interface{})
 		for _, field := range valueAST.Fields {
-			// 递归地解析字段值
 			result[field.Name.Value] = parseAstValue(field.Value)
 		}
 		return result
 	case *ast.ListValue:
-		// 创建一个 slice 来存储列表中的元素
 		list := make([]interface{}, len(valueAST.Values))
 		for i, value := range valueAST.Values {
-			// 递归解析列表中的每个元素
 			list[i] = parseAstValue(value)
 		}
 		return list
