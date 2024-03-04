@@ -28,11 +28,14 @@ func NewUserDelegate() (d *UserDelegate) {
 
 func (d *UserDelegate) initItemTable() []*adapter.Column {
 	columns := make([]*adapter.Column, 0)
-	columns = append(columns, &adapter.Column{
+	column := &adapter.Column{
 		Type:  "",
 		Name:  "id",
 		Alias: "id",
-	})
+	}
+	column.SetPrimaryKey()
+	columns = append(columns, column)
+
 	columns = append(columns, &adapter.Column{
 		Type:  "",
 		Name:  "name",
