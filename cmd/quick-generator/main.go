@@ -105,6 +105,17 @@ func parseSQL(sql string) (fileName string, content []byte, err error) {
 		return
 	}
 
+	primaryKeyMap := make(map[string]bool)
+
+	for _, index := range createTableStmt.TableSpec.Indexes {
+		if !index.Info.Primary {
+			continue
+		}
+		for _, column := range index.Columns {
+			primaryKeyMap[column.Column.String()] = true
+		}
+	}
+
 	tableName := createTableStmt.NewName.Name.String()
 	parser := NewParser(tableName)
 	for _, column := range createTableStmt.TableSpec.Columns {
@@ -113,7 +124,7 @@ func parseSQL(sql string) (fileName string, content []byte, err error) {
 			Alias: column.Name.String(),
 			Type:  column.Type.Type,
 		}
-		if column.Type.KeyOpt == 1 {
+		if column.Type.KeyOpt == 1 || primaryKeyMap[column.Name.String()] {
 			c.IsPrimaryKey = true
 		}
 		parser.AddColumns(c)
@@ -140,6 +151,9 @@ func saveContentToFile(fileName string, content []byte) error {
 	once.Do(func() {
 		err := os.Mkdir("model", 0755)
 		if err != nil {
+			if os.IsExist(err) {
+				return
+			}
 			fmt.Printf("Error creating directory: %v\n", err)
 			return
 		}
