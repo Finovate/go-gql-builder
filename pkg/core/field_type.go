@@ -4,7 +4,7 @@ type FieldType string
 
 const (
 	FieldTypeString  FieldType = "String"
-	FieldTypeInt               = "Int"
-	FieldTypeFloat             = "Float"
-	FieldTypeBoolean           = "Boolean"
+	FieldTypeInt     FieldType = "Int"
+	FieldTypeFloat   FieldType = "Float"
+	FieldTypeBoolean FieldType = "Boolean"
 )
