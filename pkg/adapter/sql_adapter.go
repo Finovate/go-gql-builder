@@ -54,6 +54,7 @@ func NewDefaultSqlAdapter(tableName string, columns []*Column, node core.Node) *
 
 func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
+		queryClauses := &argument.QueryClauses{}
 
 		for name, value := range p.Args {
 			arg := argument.ArgumentFactory(name)
@@ -64,8 +65,7 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 
 			sqlArg, ok := arg.(argument.SqlArgument)
 			if ok {
-				wherestring := sqlArg.ParseSqlValue()
-				fmt.Println(wherestring)
+				queryClauses.WHERE = sqlArg.ParseSqlValue()
 			}
 		}
 
@@ -96,8 +96,12 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 			}
 		}
 
-		sql := "SELECT %s FROM %s"
-		sql = fmt.Sprintf(sql, strings.Join(customCollect, ","), d.tableName)
+		//sql := "SELECT %s FROM %s"
+		//sql = fmt.Sprintf(sql, strings.Join(customCollect, ","), d.tableName)
+		queryClauses.SELECT = strings.Join(customCollect, ",")
+		queryClauses.FROM = d.tableName
+
+		sql := queryClauses.ToSql()
 
 		rows, err := d.node.GetRegistry().GetDB().QueryContext(context.Background(), sql)
 		if err != nil {
