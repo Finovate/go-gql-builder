@@ -83,6 +83,10 @@ func (f *FilterArgument) ParseSqlValue() string {
 	return strings.Join(sqlStrings, " AND ")
 }
 
+func (f *FilterArgument) CombineSql(clauses *QueryClauses) {
+	clauses.SetWhere(f.ParseSqlValue())
+}
+
 // 辅助函数：递归解析 AST 值
 func parseAstValue(valueAST ast.Value) interface{} {
 	switch valueAST := valueAST.(type) {

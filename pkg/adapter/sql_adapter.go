@@ -54,25 +54,6 @@ func NewDefaultSqlAdapter(tableName string, columns []*Column, node core.Node) *
 
 func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (interface{}, error) {
-		queryClauses := &argument.QueryClauses{}
-
-		for name, value := range p.Args {
-			arg := argument.ArgumentFactory(name)
-			err := arg.Validate(value)
-			if err != nil {
-				return nil, err
-			}
-
-			sqlArg, ok := arg.(argument.SqlArgument)
-			if ok {
-				switch x := sqlArg.(type) {
-				case *argument.FilterArgument:
-					queryClauses.Where(x.ParseSqlValue())
-				}
-				//Todo 其他sql argument的实现
-			}
-		}
-
 		customFields := make([]*ast.Field, 0)
 		for _, field := range p.Info.FieldASTs {
 			if field.Name.Value == d.node.Name() {
@@ -100,10 +81,29 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 			}
 		}
 
-		queryClauses.Select(strings.Join(customCollect, ","))
-		queryClauses.From(d.tableName)
+		qc := argument.NewQueryClauses(strings.Join(customCollect, ","), d.tableName)
 
-		sql, err := queryClauses.ToSql()
+		for name, value := range p.Args {
+			arg := argument.ArgumentFactory(name)
+			if arg == nil {
+				return nil, fmt.Errorf("argument typename is not exist")
+			}
+			err := arg.Validate(value)
+			if err != nil {
+				return nil, err
+			}
+
+			sqlArg, ok := arg.(argument.SqlArgument)
+			if ok {
+				sqlArg.CombineSql(qc)
+				//switch x := sqlArg.(type) {
+				//case *argument.FilterArgument:
+				//	qc.SetWhere(x.ParseSqlValue())
+				//}
+			}
+		}
+
+		sql, err := qc.ToSql()
 		if err != nil {
 			return nil, err
 		}

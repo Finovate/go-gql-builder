@@ -21,6 +21,7 @@ type Argument interface {
 type SqlArgument interface {
 	Argument
 	ParseSqlValue() string
+	CombineSql(clauses *QueryClauses)
 }
 
 type QueryClauses struct {
@@ -32,27 +33,31 @@ type QueryClauses struct {
 	limit        string
 }
 
-func (c *QueryClauses) Select(columns string) {
+func NewQueryClauses(columns, db string) *QueryClauses {
+	return &QueryClauses{selectColumn: columns, from: db}
+}
+
+func (c *QueryClauses) SetSelect(columns string) {
 	c.selectColumn = columns
 }
 
-func (c *QueryClauses) From(db string) {
+func (c *QueryClauses) SetFrom(db string) {
 	c.from = db
 }
 
-func (c *QueryClauses) Where(filter string) {
+func (c *QueryClauses) SetWhere(filter string) {
 	c.where = filter
 }
 
-func (c *QueryClauses) GroupBy(g string) {
+func (c *QueryClauses) SetGroupBy(g string) {
 	c.groupBy = g
 }
 
-func (c *QueryClauses) OrderBy(o string) {
+func (c *QueryClauses) SetOrderBy(o string) {
 	c.orderBy = o
 }
 
-func (c *QueryClauses) Limit(l string) {
+func (c *QueryClauses) SetLimit(l string) {
 	c.limit = l
 }
 
