@@ -24,40 +24,59 @@ type SqlArgument interface {
 }
 
 type QueryClauses struct {
-	SELECT  string
-	FROM    string
-	WHERE   string
-	GroupBy string
-	OrderBy string
-	LIMIT   string
-	FOR     string
+	selectColumn string
+	from         string
+	where        string
+	groupBy      string
+	orderBy      string
+	limit        string
 }
 
-func (c *QueryClauses) ToSql() string {
+func (c *QueryClauses) Select(columns string) {
+	c.selectColumn = columns
+}
+
+func (c *QueryClauses) From(db string) {
+	c.from = db
+}
+
+func (c *QueryClauses) Where(filter string) {
+	c.where = filter
+}
+
+func (c *QueryClauses) GroupBy(g string) {
+	c.groupBy = g
+}
+
+func (c *QueryClauses) OrderBy(o string) {
+	c.orderBy = o
+}
+
+func (c *QueryClauses) Limit(l string) {
+	c.limit = l
+}
+
+func (c *QueryClauses) ToSql() (string, error) {
 	sql := ""
-	if c.SELECT != "" {
-		sql += fmt.Sprintf("SELECT %s", c.SELECT)
+	if c.selectColumn == "" || c.from == "" {
+		return "", fmt.Errorf("not enough fields combined to form SQL statements")
 	}
-	if c.FROM != "" {
-		sql += fmt.Sprintf(" FROM %s", c.FROM)
+	sql += fmt.Sprintf("SELECT %s FROM %s", c.selectColumn, c.from)
+
+	if c.where != "" {
+		sql += fmt.Sprintf(" WHERE %s", c.where)
 	}
-	if c.WHERE != "" {
-		sql += fmt.Sprintf(" WHERE %s", c.WHERE)
+	if c.groupBy != "" {
+		sql += fmt.Sprintf(" GroupBy %s", c.groupBy)
 	}
-	if c.GroupBy != "" {
-		sql += fmt.Sprintf(" GroupBy %s", c.GroupBy)
+	if c.orderBy != "" {
+		sql += fmt.Sprintf(" OrderBy %s", c.orderBy)
 	}
-	if c.GroupBy != "" {
-		sql += fmt.Sprintf(" GroupBy %s", c.GroupBy)
-	}
-	if c.LIMIT != "" {
-		sql += fmt.Sprintf(" LIMIT %s", c.LIMIT)
-	}
-	if c.FOR != "" {
-		sql += fmt.Sprintf(" FOR %s", c.FOR)
+	if c.limit != "" {
+		sql += fmt.Sprintf(" LIMIT %s", c.limit)
 	}
 
-	return sql
+	return sql, nil
 }
 
 type DefaultArgumentBuilder struct {

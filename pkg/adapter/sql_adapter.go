@@ -65,7 +65,11 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 
 			sqlArg, ok := arg.(argument.SqlArgument)
 			if ok {
-				queryClauses.WHERE = sqlArg.ParseSqlValue()
+				switch x := sqlArg.(type) {
+				case *argument.FilterArgument:
+					queryClauses.Where(x.ParseSqlValue())
+				}
+				//Todo 其他sql argument的实现
 			}
 		}
 
@@ -96,12 +100,13 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 			}
 		}
 
-		//sql := "SELECT %s FROM %s"
-		//sql = fmt.Sprintf(sql, strings.Join(customCollect, ","), d.tableName)
-		queryClauses.SELECT = strings.Join(customCollect, ",")
-		queryClauses.FROM = d.tableName
+		queryClauses.Select(strings.Join(customCollect, ","))
+		queryClauses.From(d.tableName)
 
-		sql := queryClauses.ToSql()
+		sql, err := queryClauses.ToSql()
+		if err != nil {
+			return nil, err
+		}
 
 		rows, err := d.node.GetRegistry().GetDB().QueryContext(context.Background(), sql)
 		if err != nil {
