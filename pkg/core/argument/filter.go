@@ -82,6 +82,10 @@ func (f *FilterArgument) ParseSqlValue() string {
 	return strings.Join(sqlStrings, " AND ")
 }
 
+func (f *FilterArgument) CombineSql(clauses *QueryClauses) {
+	clauses.SetWhere(f.ParseSqlValue())
+}
+
 // 辅助函数：递归解析 AST 值
 // TODO: 基本数据类型的解析逻辑还有点粗糙，需要优化。这个函数优化后还需要修改 CompareOperation
 func parseAstValue(valueAST ast.Value) interface{} {
