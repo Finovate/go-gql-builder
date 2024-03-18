@@ -8,8 +8,9 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
 
+	sqlArgument "github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter/internal/argument"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
+	coreArgument "github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
 // SqlAdapter is a part of Node interface, which is
@@ -81,10 +82,10 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 			}
 		}
 
-		qc := argument.NewQueryClauses(strings.Join(customCollect, ","), d.tableName)
+		qc := sqlArgument.NewQueryClauses(strings.Join(customCollect, ","), d.tableName)
 
 		for name, value := range p.Args {
-			arg := argument.ArgumentFactory(name)
+			arg := coreArgument.Factory(name)
 			if arg == nil {
 				return nil, fmt.Errorf("argument typename is not exist")
 			}
@@ -93,7 +94,7 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 				return nil, err
 			}
 
-			sqlArg, ok := arg.(argument.SqlArgument)
+			sqlArg, ok := arg.(sqlArgument.SqlArgument)
 			if ok {
 				sqlArg.CombineSql(qc)
 				//switch x := sqlArg.(type) {
