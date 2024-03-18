@@ -3,12 +3,12 @@ package adapter
 import (
 	"context"
 	"fmt"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter/internal/argument"
 	"strings"
 
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
 
+	sqlArgument "github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter/internal/argument"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
 	coreArgument "github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
@@ -82,7 +82,7 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 			}
 		}
 
-		qc := argument.NewQueryClauses(strings.Join(customCollect, ","), d.tableName)
+		qc := sqlArgument.NewQueryClauses(strings.Join(customCollect, ","), d.tableName)
 
 		for name, value := range p.Args {
 			arg := coreArgument.Factory(name)
@@ -94,7 +94,7 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 				return nil, err
 			}
 
-			sqlArg, ok := arg.(argument.SqlArgument)
+			sqlArg, ok := arg.(sqlArgument.SqlArgument)
 			if ok {
 				sqlArg.CombineSql(qc)
 				//switch x := sqlArg.(type) {

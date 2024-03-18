@@ -2,6 +2,7 @@ package argument
 
 import (
 	"fmt"
+
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 

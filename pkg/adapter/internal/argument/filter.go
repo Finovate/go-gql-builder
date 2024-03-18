@@ -2,10 +2,12 @@ package argument
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
+
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
-	"strings"
 )
 
 var (
