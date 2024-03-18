@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
+	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 	"strings"
 )
 
@@ -29,7 +30,7 @@ type FilterArgument struct {
 	operationsMap map[string][]Operation
 }
 
-func newFilterArgument() *FilterArgument {
+func newFilterArgument() argument.Argument {
 	return &FilterArgument{
 		operationsMap: make(map[string][]Operation),
 	}
@@ -115,4 +116,8 @@ func parseAstValue(valueAST ast.Value) interface{} {
 	default:
 		return nil
 	}
+}
+
+func init() {
+	argument.RegisterArgument(FilterArgumentType, newFilterArgument)
 }
