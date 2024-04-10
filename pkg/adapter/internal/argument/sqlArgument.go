@@ -62,10 +62,10 @@ func (c *QueryClauses) ToSql() (string, error) {
 		sql += fmt.Sprintf(" WHERE %s", c.where)
 	}
 	if c.groupBy != "" {
-		sql += fmt.Sprintf(" GroupBy %s", c.groupBy)
+		sql += fmt.Sprintf(" Group By %s", c.groupBy)
 	}
 	if c.orderBy != "" {
-		sql += fmt.Sprintf(" OrderBy %s", c.orderBy)
+		sql += fmt.Sprintf(" Order By %s", c.orderBy)
 	}
 	if c.limit != "" {
 		sql += fmt.Sprintf(" LIMIT %s", c.limit)
