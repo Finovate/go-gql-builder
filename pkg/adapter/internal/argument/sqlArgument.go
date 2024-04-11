@@ -2,8 +2,9 @@ package argument
 
 import (
 	"fmt"
-	"github.com/graphql-go/graphql/language/ast"
 	"strconv"
+
+	"github.com/graphql-go/graphql/language/ast"
 
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
@@ -97,6 +98,7 @@ func parseAstValue(valueAST ast.Value) interface{} {
 	case *ast.IntValue:
 		result, err := strconv.Atoi(valueAST.Value)
 		if err != nil {
+			fmt.Println(err)
 			return valueAST.Value
 		}
 		return result

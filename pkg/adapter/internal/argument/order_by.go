@@ -2,10 +2,12 @@ package argument
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
+
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
-	"strings"
 )
 
 var (
@@ -26,31 +28,20 @@ var (
 
 var _ SqlArgument = (*OrderByArgument)(nil)
 
-type Sort string
-
-const (
-	AscSort  Sort = "ASC"
-	DescSort Sort = "DESC"
-)
-
 var (
-	Sort_name = map[Sort]string{
-		AscSort:  "ASC",
-		DescSort: "DESC",
-	}
-	Sort_value = map[string]Sort{
-		"ASC":  AscSort,
-		"DESC": DescSort,
+	Sort = map[string]struct{}{
+		"ASC":  {},
+		"DESC": {},
 	}
 )
 
 type OrderByArgument struct {
-	sortMap map[string]Sort
+	sortMap map[string]string
 }
 
 func newOrderByArgument() argument.Argument {
 	return &OrderByArgument{
-		sortMap: make(map[string]Sort, 0),
+		sortMap: make(map[string]string, 0),
 	}
 }
 
@@ -70,11 +61,11 @@ func (f *OrderByArgument) Validate(input interface{}) error {
 			return fmt.Errorf("argument for field %s must be a string", fieldName)
 		}
 
-		sort, ok := Sort_value[strings.ToUpper(sortString)]
+		_, ok = Sort[strings.ToUpper(sortString)]
 		if !ok {
 			return fmt.Errorf(`argument for field %s must be "asc" or "desc"`, fieldName)
 		}
-		f.sortMap[fieldName] = sort
+		f.sortMap[fieldName] = sortString
 	}
 
 	return nil
@@ -87,7 +78,7 @@ func (f *OrderByArgument) GetArgumentType() graphql.Input {
 func (f *OrderByArgument) ParseSqlValue() string {
 	sqlStrings := make([]string, 0, len(f.sortMap))
 	for fieldName, sort := range f.sortMap {
-		sqlStrings = append(sqlStrings, fmt.Sprintf("%s %s", fieldName, Sort_name[sort]))
+		sqlStrings = append(sqlStrings, fmt.Sprintf("%s %s", fieldName, sort))
 	}
 
 	return strings.Join(sqlStrings, ",")

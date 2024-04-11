@@ -2,8 +2,10 @@ package argument
 
 import (
 	"fmt"
+
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
+
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
@@ -25,6 +27,10 @@ var (
 
 var _ SqlArgument = (*LimitArgument)(nil)
 
+// LimitArgument
+// limit 入参
+// limit:9
+// limit:[1,9]
 type LimitArgument struct {
 	limit  int
 	offset int
