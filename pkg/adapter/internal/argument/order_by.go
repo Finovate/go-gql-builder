@@ -29,7 +29,7 @@ var (
 var _ SqlArgument = (*OrderByArgument)(nil)
 
 var (
-	Sort = map[string]struct{}{
+	sort = map[string]struct{}{
 		"ASC":  {},
 		"DESC": {},
 	}
@@ -61,7 +61,7 @@ func (f *OrderByArgument) Validate(input interface{}) error {
 			return fmt.Errorf("argument for field %s must be a string", fieldName)
 		}
 
-		_, ok = Sort[strings.ToUpper(sortString)]
+		_, ok = sort[strings.ToUpper(sortString)]
 		if !ok {
 			return fmt.Errorf(`argument for field %s must be "asc" or "desc"`, fieldName)
 		}
