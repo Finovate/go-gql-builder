@@ -29,8 +29,7 @@ var _ SqlArgument = (*LimitArgument)(nil)
 
 // LimitArgument
 // limit 入参
-// limit:9
-// limit:[1,9]
+// limit:{ count: 10 offset : 0 }
 type LimitArgument struct {
 	limit  int
 	offset int
@@ -48,30 +47,21 @@ func (f *LimitArgument) TypeName() string {
 }
 
 func (f *LimitArgument) Validate(input interface{}) error {
-	err := fmt.Errorf("limit argument must be a positive integer or an all positive integer array with a length of 2")
+	argsMap, ok := input.(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("limit argument must be a map[string]int")
+	}
 
-	switch arg := input.(type) {
-	case int:
-		f.limit = arg
-	case []interface{}:
-		if len(arg) != 2 {
-			return err
-		}
-		for _, i := range arg {
-			if _, ok := i.(int); !ok {
-				return err
-			}
-		}
-		f.offset = arg[0].(int)
-		f.limit = arg[1].(int)
-	default:
-		return err
+	f.offset, _ = argsMap["offset"].(int)
+	if f.limit, ok = argsMap["count"].(int); !ok {
+		return fmt.Errorf("limit argument field count must be required")
 	}
 
 	if f.limit >= 0 && f.offset >= 0 {
 		return nil
+	} else {
+		return fmt.Errorf("limit argument must be a positive integer")
 	}
-	return err
 }
 
 func (f *LimitArgument) GetArgumentType() graphql.Input {
