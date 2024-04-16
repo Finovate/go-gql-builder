@@ -136,7 +136,6 @@ func (d *DefaultSqlAdapter) Resolve() graphql.FieldResolveFn {
 				}
 				item[col] = val
 			}
-			fmt.Println(item)
 			list = append(list, item)
 		}
 

@@ -1,5 +1,7 @@
 package argument
 
 const (
-	FilterArgumentType = "filter"
+	FilterArgumentType  = "filter"
+	LimitArgumentType   = "limit"
+	OrderByArgumentType = "orderBy"
 )
