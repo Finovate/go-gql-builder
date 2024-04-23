@@ -165,7 +165,7 @@ func (c *Column) SwitchType() core.FieldType {
 		return core.FieldTypeInt
 	case "VARCHAR", "TEXT", "CHAR":
 		return core.FieldTypeString
-	case "DECIMAL":
+	case "DECIMAL", "FLOAT":
 		return core.FieldTypeFloat
 	// ... 其他数据类型
 	default:
