@@ -6,6 +6,7 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
 
+	astCommon "github.com/shuishiyuanzhong/go-gql-builder/pkg/common/ast"
 	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
@@ -20,7 +21,7 @@ var (
 			return value
 		},
 		ParseLiteral: func(valueAST ast.Value) interface{} {
-			return parseAstValue(valueAST)
+			return astCommon.ParseAstValue(valueAST)
 		},
 	})
 )
