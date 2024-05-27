@@ -2,8 +2,9 @@ package ast
 
 import (
 	"fmt"
-	"github.com/graphql-go/graphql/language/ast"
 	"strconv"
+
+	"github.com/graphql-go/graphql/language/ast"
 )
 
 // ParseAstValue 辅助函数：递归解析 AST 值

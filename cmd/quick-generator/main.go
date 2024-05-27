@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/xwb1989/sqlparser"
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/xwb1989/sqlparser"
 )
 
 func main() {

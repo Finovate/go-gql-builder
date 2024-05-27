@@ -7,8 +7,8 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
 
-	astCommon "github.com/shuishiyuanzhong/go-gql-builder/pkg/common/ast"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
+	astCommon "github.com/Finovate/go-gql-builder/pkg/common/ast"
+	"github.com/Finovate/go-gql-builder/pkg/core/argument"
 )
 
 var (

@@ -3,7 +3,7 @@ package argument
 import (
 	"fmt"
 
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
+	"github.com/Finovate/go-gql-builder/pkg/core/argument"
 )
 
 type SqlArgument interface {
