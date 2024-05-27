@@ -3,9 +3,9 @@ package model
 import (
 	"github.com/graphql-go/graphql"
 
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
+	"github.com/Finovate/go-gql-builder/pkg/adapter"
+	"github.com/Finovate/go-gql-builder/pkg/core"
+	"github.com/Finovate/go-gql-builder/pkg/core/argument"
 )
 
 const (

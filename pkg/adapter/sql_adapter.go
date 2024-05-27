@@ -8,9 +8,9 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/graphql/language/ast"
 
-	sqlArgument "github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter/internal/argument"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
-	coreArgument "github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
+	sqlArgument "github.com/Finovate/go-gql-builder/pkg/adapter/internal/argument"
+	"github.com/Finovate/go-gql-builder/pkg/core"
+	coreArgument "github.com/Finovate/go-gql-builder/pkg/core/argument"
 )
 
 // SqlAdapter is a part of Node interface, which is

@@ -1,8 +1,8 @@
 package core
 
 import (
+	"github.com/Finovate/go-gql-builder/pkg/core/argument"
 	"github.com/graphql-go/graphql"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
 )
 
 // Node a Node represents a fundamental business object,

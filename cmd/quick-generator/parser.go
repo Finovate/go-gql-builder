@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
+	"github.com/Finovate/go-gql-builder/pkg/core"
 	"strings"
 	"text/template"
 )
@@ -13,9 +13,9 @@ var templateString = `package model
 import (
 	"github.com/graphql-go/graphql"
 
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/adapter"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core/argument"
+	"github.com/Finovate/go-gql-builder/pkg/adapter"
+	"github.com/Finovate/go-gql-builder/pkg/core"
+	"github.com/Finovate/go-gql-builder/pkg/core/argument"
 )
 
 const (
@@ -169,7 +169,7 @@ func (c *Column) SwitchType() core.FieldType {
 		return core.FieldTypeFloat
 	// ... 其他数据类型
 	default:
-		fmt.Printf("unknown data type: %s, please summit issue to https://github.com/shuishiyuanzhong/go-gql-builder/issues\n", c.Type)
+		fmt.Printf("unknown data type: %s, please summit issue to https://github.com/Finovate/go-gql-builder/issues\n", c.Type)
 		return "interface{}"
 	}
 }

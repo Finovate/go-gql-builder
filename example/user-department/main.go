@@ -3,10 +3,10 @@ package main
 import (
 	"net/http"
 
-	"github.com/shuishiyuanzhong/go-gql-builder/pkg/core"
+	"github.com/Finovate/go-gql-builder/pkg/core"
 
-	"github.com/shuishiyuanzhong/go-gql-builder/example/user-department/conf"
-	"github.com/shuishiyuanzhong/go-gql-builder/example/user-department/model"
+	"github.com/Finovate/go-gql-builder/example/user-department/conf"
+	"github.com/Finovate/go-gql-builder/example/user-department/model"
 )
 
 func InitGraphQL() (http.Handler, error) {
